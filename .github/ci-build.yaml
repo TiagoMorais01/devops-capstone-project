@@ -1,16 +1,16 @@
 name: CI Build
+
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   pull_request:
-    branches:
-      - main
+    branches: [main]
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    container: python:3.9-slim
+    container:
+      image: python:3.9-slim
 
     services:
       postgres:
@@ -27,7 +27,7 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v2
 
       - name: Install dependencies
@@ -40,7 +40,7 @@ jobs:
           flake8 service --count --select=E9,F63,F7,F82 --show-source --statistics
           flake8 service --count --max-complexity=10 --max-line-length=127 --statistics
 
-      - name: Run unit tests with nose
+      - name: Run unit tests
         run: nosetests
         env:
-          DATABASE_URI: "postgresql://postgres:pgs3cr3t@postgres:5432/testdb"
+          DATABASE_URI: postgresql://postgres:pgs3cr3t@postgres:5432/testdb
